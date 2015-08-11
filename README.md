@@ -13,11 +13,11 @@ docker pull timosaikkonen/nginx-autobalance
 Run:
 
 ```
-docker run timosaikkonen/nginx-autobalance \ 
-	-e NGA_SERVICES_WEB_PATH=/ \
-	-e NGA_SERVICES_WEB_UPSTREAMDIRECTIVE=ip_hash \
-	-v /data/nginx/services:/etc/nginx/services \
-	-v /data/nginx/cert:/etc/nginx/cert
+docker run timosaikkonen/nginx-autobalance \
+  -e NGA_SERVICES_WEB_PATH=/ \
+  -e NGA_SERVICES_WEB_LBMODE=ip_hash \
+  -v /data/nginx/services:/etc/nginx/services \
+  -v /data/nginx/cert:/etc/nginx/cert
 ```
 
 ### Configuration
@@ -30,7 +30,37 @@ This container uses a combination of environment variables and service-specific 
 Variable                        | Description
 --------------------------------|---------------------------
 NGA_PORT                        | Port to listen to (default=80)
-NGA_FORCESSL                    | If true, all non-SSL traffic will be redirected to SSL
+NGA_FORCESSL                    | If true, all non-SSL traffic will be redirected to the corresponding https url
 NGA_SERVICES_service_PATH       | Root path for *service*
-NGA_SERVICES_service_LBMODE     | Load balancing mode for service (ip_hash, least_conn). Defaults to round-robin.
+NGA_SERVICES_service_LBMODE     | Load balancing mode for service (`round_robin`, `ip_hash`, `least_conn`). Defaults to `round_robin`.
+
+#### Configuration files
+
+You need to provide service-specific nginx configuration files through a mounted volume or by ADDing the files to `/etc/nginx/services`. The files must be named `<servicename>.conf`. The files will be included under the http directive and your upstream services have been declared as their respective service names.
+
+The most basic example would look something like this:
+
+```
+location / {
+  proxy_pass http://web;
+}
+```
+
+#### SSL
+
+Nginx will look for an SSL cert and key at `/etc/nginx/cert.crt` and `/etc/nginx/cert.key` respectively. The default configuration is based on [this](https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html "Strong SSL Security"):
+
+```
+ssl on;
+ssl_certificate /etc/nginx/ssl/cert.crt;
+ssl_certificate_key /etc/nginx/ssl/cert.key;
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+ssl_prefer_server_ciphers on;
+ssl_session_cache shared:SSL:10m;
+```
+
+To override, ADD an ssl.conf file to `/etc/nginx/ssl.conf`.
+
+
 
