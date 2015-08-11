@@ -14,6 +14,8 @@ describe('watcher', function () {
     var watcher = new Watcher({
       port: 80,
       connector: connector,
+      forcessl: false,
+      ssl: false,
       services: {
         web: {
           path: '/',
@@ -36,6 +38,8 @@ describe('watcher', function () {
     var watcher = new Watcher({
       port: 80,
       connector: {},
+      forcessl: false,
+      ssl: false,
       services: {
         web: {
           path: '/',
