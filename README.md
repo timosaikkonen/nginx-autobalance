@@ -31,6 +31,7 @@ Variable                        | Description
 --------------------------------|---------------------------
 NGA_PORT                        | Port to listen to (default=80)
 NGA_FORCESSL                    | If true, all non-SSL traffic will be redirected to the corresponding https url
+NGA_RELOADDELAY                 | Delay (in ms) before regenerating and reloading nginx configuration after changes have been made (default=5000)
 NGA_SERVICES_service_PATH       | Root path for *service*
 NGA_SERVICES_service_LBMODE     | Load balancing mode for service (`round_robin`, `ip_hash`, `least_conn`). Defaults to `round_robin`.
 

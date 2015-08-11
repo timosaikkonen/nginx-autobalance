@@ -7,13 +7,16 @@ var Watcher = require('../lib/watcher');
 describe('watcher', function () {
   it('should get nodes on startup', function (done) {
     var connector = {
-      getNodes: simple.stub().callbackWith(null, []),
+      getNodes: simple.spy(function () {
+        done();
+      }),
       on: function () {}
     };
 
     var watcher = new Watcher({
       port: 80,
       connector: connector,
+      reloaddelay: 1000,
       forcessl: false,
       ssl: false,
       services: {
@@ -23,9 +26,7 @@ describe('watcher', function () {
       }
     });
 
-    watcher.watch(done);
-
-    connector.getNodes.called.should.equal(true);
+    watcher.watch();
   });
 
   it('should render config', function (done) {
@@ -38,6 +39,7 @@ describe('watcher', function () {
     var watcher = new Watcher({
       port: 80,
       connector: {},
+      reloaddelay: 1000,
       forcessl: false,
       ssl: false,
       services: {
