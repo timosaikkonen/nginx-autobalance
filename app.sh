@@ -1,3 +1,4 @@
 #!/bin/bash
 cd /usr/src/app
-forever start -f index.js
+/etc/init.d/nginx start
+forever -f index.js
