@@ -1,3 +1,3 @@
 #!/bin/bash
 cd /usr/src/app
-forever start index.js
+forever start -f index.js
