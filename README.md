@@ -14,6 +14,7 @@ Run:
 
 ```
 docker run timosaikkonen/nginx-autobalance \
+  -p 80:80 -p 443:443 \
   -e NGA_SERVICES_WEB_PATH=/ \
   -e NGA_SERVICES_WEB_LBMODE=ip_hash \
   -v /data/nginx/services:/etc/nginx/services \
