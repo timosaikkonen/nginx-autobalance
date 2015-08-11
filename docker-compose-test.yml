@@ -1,0 +1,14 @@
+app:
+  build: .
+  volumes:
+    - .:/usr/src/app
+    - ./test/fixtures/services:/etc/nginx/services
+  links:
+    - consul
+
+consul:
+  image: progrium/consul
+  entrypoint:
+    - "/bin/start"
+    - "-server"
+    - "-bootstrap-expect 1"

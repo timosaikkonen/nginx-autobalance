@@ -1,0 +1,26 @@
+{
+  "name": "nginx-autobalance",
+  "version": "0.0.1",
+  "description": "nginx loadbalancer that automatically connects to a list of backends provided by consul",
+  "main": "index.js",
+  "scripts": {
+    "test": "docker-compose -f docker-compose-test.yml run app /usr/src/app/test.sh; docker-compose -f docker-compose-test.yml kill; docker-compose -f docker-compose-test.yml rm -f -v"
+  },
+  "keywords": [
+    "consul",
+    "nginx"
+  ],
+  "author": "Timo Saikkonen",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.2",
+    "consul": "^0.15.0",
+    "ejs": "^2.3.3",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5",
+    "simple-mock": "^0.3.1"
+  }
+}
