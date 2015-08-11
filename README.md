@@ -18,7 +18,7 @@ docker run timosaikkonen/nginx-autobalance \
   -e NGA_SERVICES_WEB_PATH=/ \
   -e NGA_SERVICES_WEB_LBMODE=ip_hash \
   -v /data/nginx/services:/etc/nginx/services \
-  -v /data/nginx/cert:/etc/nginx/cert
+  -v /data/nginx/cert:/etc/nginx/ssl
 ```
 
 ### Configuration
@@ -50,7 +50,7 @@ location / {
 
 #### SSL
 
-Nginx will look for an SSL cert and key at `/etc/nginx/cert.crt` and `/etc/nginx/cert.key` respectively. The default configuration is based on [this](https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html "Strong SSL Security"):
+Nginx will look for an SSL cert and key at `/etc/nginx/ssl/cert.crt` and `/etc/nginx/ssl/cert.key` respectively. The default configuration is based on [this](https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html "Strong SSL Security"):
 
 ```
 ssl on;
