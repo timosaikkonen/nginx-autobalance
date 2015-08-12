@@ -15,6 +15,10 @@ http {<% for (var k in services) { %>
 
   server {
     listen <%= port %>;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
     <% if (forcessl) { %>rewrite ^(.*) https://$host$1 permanent;
     <% } else { for (var k in services) { %>
     include /etc/nginx/services/<%= k %>.conf;<% } %>
