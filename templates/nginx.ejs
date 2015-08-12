@@ -28,7 +28,7 @@ http {<% for (var k in services) { %>
   server {
     listen 443;
 
-    include ssl.conf
+    include ssl.conf;
     <% for (var k in services) { %>
     include /etc/nginx/services/<%= k %>.conf;<% } %>
   }
