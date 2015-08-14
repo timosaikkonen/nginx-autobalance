@@ -17,8 +17,8 @@ watcherOptions.connector = connector;
 var watcher = new Watcher(watcherOptions);
 
 watcher.on('render', function (data) {
-  console.log('writing nginx config file to', options.nginxConfigFileName);
-  fs.writeFile(options.nginxConfigFileName, data.output, function (err) {
+  console.log('writing nginx config file to', options.nginxUpstreamFileName);
+  fs.writeFile(options.nginxUpstreamFileName, data.output, function (err) {
     if (err) {
       return console.error('failed to write nginx config file:', err);
     }
