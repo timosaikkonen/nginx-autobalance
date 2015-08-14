@@ -23,12 +23,24 @@ watcher.on('render', function (data) {
       return console.error('failed to write nginx config file:', err);
     }
 
-    childProcess.exec('nginx -s reload', function (err) {
-      if (err) {
-        return console.error('nginx reload failed:', err);
-      }
+    fs.exists('/run/nginx.pid', function (nginxIsRunning) {
+      if (nginxIsRunning) {
+        childProcess.exec('nginx -s reload', function (err) {
+          if (err) {
+            return console.error('nginx reload failed:', err);
+          }
 
-      console.log('nginx reloaded successfully');
+          console.log('nginx reloaded successfully');
+        });
+      } else {
+        childProcess.exec('/etc/init.d/nginx start', function (err) {
+          if (err) {
+            return console.error('nginx startup failed:', err);
+          }
+
+          console.log('nginx started successfully');
+        });
+      }
     });
   });
 });
