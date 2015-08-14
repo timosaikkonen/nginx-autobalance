@@ -1,0 +1,5 @@
+<% for (var k in services) { %>
+upstream <%= k %> { <% if (services[k].lbmode && services[k].lbmode !== 'round_robin') { %>
+  <%= services[k].lbmode %><% } %>
+  <% services[k].nodes.forEach(function (node) { %>server <%= node.address %>:<%= node.port %>; <% }); %>
+}<% } %>

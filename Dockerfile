@@ -14,4 +14,4 @@ RUN mkdir /etc/service/app
 ADD app.sh /etc/service/app/run
 
 ADD . /usr/src/app
-ADD ssl.conf /etc/nginx/ssl.conf
+ADD nginx/. /etc/nginx/

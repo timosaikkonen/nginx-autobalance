@@ -2,6 +2,8 @@
 
 A reverse proxy that pulls your backend nodes from your service discovery server (only Consul at this point, pull requests welcome) and drops dead/removed nodes automagically.
 
+Very much work in progress. The configuration mechanism isn't quite settled yet and subject to change.
+
 ## Run
 
 Pull the image:
@@ -30,15 +32,13 @@ This container uses a combination of environment variables and service-specific 
 
 Variable                        | Description
 --------------------------------|---------------------------
-NGA_PORT                        | Port to listen to (default=80)
-NGA_FORCESSL                    | If true, all non-SSL traffic will be redirected to the corresponding https url
 NGA_RELOADDELAY                 | Delay (in ms) before regenerating and reloading nginx configuration after changes have been made (default=5000)
 NGA_SERVICES_service_PATH       | Root path for *service*
 NGA_SERVICES_service_LBMODE     | Load balancing mode for service (`round_robin`, `ip_hash`, `least_conn`). Defaults to `round_robin`.
 
 #### Configuration files
 
-You need to provide service-specific nginx configuration files through a mounted volume or by ADDing the files to `/etc/nginx/services`. The files must be named `<servicename>.conf`. The files will be included under the http directive and your upstream services have been declared as their respective service names.
+You need to provide service-specific nginx configuration files through a mounted volume or by `ADD`ing the files to `/etc/nginx/services`. The files must be named `<servicename>.conf`. The files will be included under the http directive and your upstream services have been declared as their respective service names.
 
 The most basic example would look something like this:
 
@@ -47,6 +47,8 @@ location / {
   proxy_pass http://web;
 }
 ```
+
+To override All The Things, `ADD` a new `nginx.conf` to `/etc/nginx/nginx.conf`. Take a look at `nginx/nginx.conf` for a starting point.
 
 #### SSL
 
@@ -62,7 +64,7 @@ ssl_prefer_server_ciphers on;
 ssl_session_cache shared:SSL:10m;
 ```
 
-To override, ADD an ssl.conf file to `/etc/nginx/ssl.conf`.
+To override, `ADD` an ssl.conf file to `/etc/nginx/ssl.conf`.
 
 
 
