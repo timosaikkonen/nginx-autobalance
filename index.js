@@ -45,7 +45,13 @@ watcher.on('render', function (data) {
   });
 });
 
-watcher.watch();
+watcher.watch(function (err) {
+  if (err) {
+    console.error('failed to initialize watcher, exiting', err);
+    process.exit(1);
+  }
+});
+
 connector.watch();
 
 process.on('exit', function () {
