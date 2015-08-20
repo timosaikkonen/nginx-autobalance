@@ -90,6 +90,37 @@ describe('consul', function () {
     })
   });
 
+  it('should not list nodes that are in maintenance mode', function (done) {
+    this.timeout(5000);
+
+    var connector = new ConsulConnector({ consul: consul });
+
+    connector.watch();
+
+    setTimeout(function () {
+      consul.agent.service.register('web', function (err) {
+        if (err) {
+          return done(err);
+        }
+
+        consul.agent.maintenance(true, function(err) {
+          if (err) {
+            return done(err);
+          }
+
+          connector.getNodes('web', function (err, nodes) {
+            if (err) {
+              return done(err);
+            }
+
+            nodes.should.be.empty;
+            done();
+          });
+        });
+      });
+    }, 500);
+  });
+
   after(function () {
     consul.agent.service.deregister('web', function () { });
   });
