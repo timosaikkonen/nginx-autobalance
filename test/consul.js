@@ -44,7 +44,7 @@ describe('consul', function () {
   });
 
   it('should be able to get a list of nodes', function (done) {
-    var connector = new ConsulConnector({ consul: consul });
+    var connector = new ConsulConnector({ consul: consul, services: { web: {} } });
     connector.getNodes('web', function (err, nodes) {
       if (err) {
         return done(err);
@@ -58,26 +58,49 @@ describe('consul', function () {
     });
   });
 
-  it('should fire a change event when catalog changes', function (done) {
-    this.timeout(5000);
+  it('should fire a change event when maintenance mode is switched on', function (done) {
+    this.timeout(1000);
     var eventHandlerStub = simple.stub().callFn(function (data) {
-      consul.agent.maintenance(false, done);
+      connector.stop();
+      done();
     });
 
-    var connector = new ConsulConnector({ consul: consul });
+    var connector = new ConsulConnector({ consul: consul, services: { web: {} } });
 
     connector.watch();
 
     setTimeout(function () {
       connector.once('change', eventHandlerStub);
       consul.agent.maintenance(true, function(err) {
+        if (err) {
+          connector.stop();
+          done(err);
+        }
+      });
+    }, 500);
+  });
+
+  it('should fire a change event when maintenance mode is switched off', function (done) {
+    this.timeout(1000);
+    var eventHandlerStub = simple.stub().callFn(function (data) {
+      connector.stop();
+      done();
+    });
+
+    var connector = new ConsulConnector({ consul: consul, services: { web: {} } });
+
+    connector.watch();
+
+    setTimeout(function () {
+      connector.once('change', eventHandlerStub);
+      consul.agent.maintenance(false, function(err) {
         if (err) done(err);
       });
     }, 500);
   });
 
   it('should not list deregistered services', function (done) {
-    var connector = new ConsulConnector({ consul: consul });
+    var connector = new ConsulConnector({ consul: consul, services: { web: {} } });
     consul.agent.service.deregister('web', function (err) {
       if (err) return done(err);
 
@@ -93,33 +116,38 @@ describe('consul', function () {
   it('should not list nodes that are in maintenance mode', function (done) {
     this.timeout(5000);
 
-    var connector = new ConsulConnector({ consul: consul });
+    var connector = new ConsulConnector({ consul: consul, services: { web: {} } });
 
     connector.watch();
 
     setTimeout(function () {
       consul.agent.service.register('web', function (err) {
         if (err) {
+          connector.stop();
           return done(err);
         }
 
         consul.agent.maintenance(true, function(err) {
           if (err) {
+            connector.stop();
             return done(err);
           }
 
           connector.getNodes('web', function (err, nodes) {
+            connector.stop();
+
             if (err) {
               return done(err);
             }
 
             nodes.should.be.empty;
-            done();
+            consul.agent.maintenance(false, done);
           });
         });
       });
     }, 500);
   });
+
 
   after(function () {
     consul.agent.service.deregister('web', function () { });
